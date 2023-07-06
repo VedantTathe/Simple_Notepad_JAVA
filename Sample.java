@@ -8,11 +8,12 @@ import javax.swing.event.*;
 class MyFrame extends JFrame implements ActionListener, DocumentListener
 {
 	private JMenuBar mb;
-	private JMenu menu_file, menu_edit, file_path;
+	private JMenu menu_file, menu_edit;
 	private JMenuItem mi;
 	private JScrollPane sp;
 	private JTextArea ta, ta1;
 	private JFileChooser jsp;
+	private FileNameExtensionFilter fne;
 	private boolean file_direct_save = false;
 	private boolean is_file_saved = true;
 	private MyFrame me = this;
@@ -66,6 +67,15 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 		// jsp = new JFileChooser("E:/1. 5th Sem/Advanced JAVA/Practice/SWING");
 		jsp = new JFileChooser();
 
+		String desc[] = {"C File", "CPP File", "JAVA File", "TEXT File"};
+		String extension[] = {"c", "cpp", "java", "txt"};
+		
+
+		for(int i = 0; i<desc.length; i++)
+		{
+			fne = new FileNameExtensionFilter(desc[i], extension[i]);
+			jsp.setFileFilter(fne);
+		}
 
 		this.setVisible(true);
 		this.setSize(500, 400);
@@ -170,8 +180,8 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 	public void textChanged()
 	{
 		cur_txt = ta.getText();
-		System.out.println("cur_txt: "+cur_txt);
-		System.out.println("prev_txt: "+prev_txt);
+		// System.out.println("cur_txt: "+cur_txt);
+		// System.out.println("prev_txt: "+prev_txt);
 
 		if(!cur_txt.equals(prev_txt))
 		is_file_saved = false;
