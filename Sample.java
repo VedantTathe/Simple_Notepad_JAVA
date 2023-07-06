@@ -16,6 +16,8 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 	private boolean file_direct_save = false;
 	private boolean is_file_saved = true;
 	private MyFrame me = this;
+	private String prev_txt = "";
+	private String cur_txt = "";
 
 
 	public MyFrame()
@@ -35,7 +37,7 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 			if(i > 2)
 			menu_file.addSeparator();
 
-			mi = new JMenuItem(text1[i], new ImageIcon("../images/"+text1[i]+".jpg"));
+			mi = new JMenuItem(text1[i], new ImageIcon("images/"+text1[i]+".jpg"));
 			menu_file.add(mi);
 			mi.addActionListener(this);
 		}
@@ -46,7 +48,7 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 
 		for(int i = 0; i<text2.length; i++)
 		{
-			mi = new JMenuItem(text2[i], new ImageIcon("../images/"+text2[i]+".jpg"));
+			mi = new JMenuItem(text2[i], new ImageIcon("images/"+text2[i]+".jpg"));
 			menu_edit.add(mi);
 			mi.addActionListener(this);
 		}
@@ -61,7 +63,8 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 		this.add(sp, BorderLayout.CENTER);
 		ta.getDocument().addDocumentListener(this);
 
-		jsp = new JFileChooser("E:/1. 5th Sem/Advanced JAVA/Practice/SWING");
+		// jsp = new JFileChooser("E:/1. 5th Sem/Advanced JAVA/Practice/SWING");
+		jsp = new JFileChooser();
 
 
 		this.setVisible(true);
@@ -104,6 +107,7 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 						}
 					}
 					ta.setText(""); 
+					prev_txt = "";
 					file_direct_save=false; 
 					break;
 			case "open":
@@ -143,21 +147,47 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 	@Override
 	public void insertUpdate(DocumentEvent e)
 	{
-		is_file_saved = false;
-	
-		ta1.setText(ta1.getText()+ " *");}
+		
+		textChanged();
+
+
+	}
 	@Override
 	public void removeUpdate(DocumentEvent e)
 	{
-		is_file_saved = false;
-	
-		ta1.setText(ta1.getText()+ " *");
+		
+		textChanged();
 	}
 	@Override
 	public void changedUpdate(DocumentEvent e)
 	{
+		textChanged();
+		
+
+
+	}
+
+	public void textChanged()
+	{
+		cur_txt = ta.getText();
+		System.out.println("cur_txt: "+cur_txt);
+		System.out.println("prev_txt: "+prev_txt);
+
+		if(!cur_txt.equals(prev_txt))
 		is_file_saved = false;
-		ta1.setText(ta1.getText()+ " *");
+	else {
+		is_file_saved = true;
+	}
+
+		if(!is_file_saved){
+			if(!ta1.getText().endsWith("*"))
+			ta1.setText(ta1.getText()+ " *");
+		}
+		else
+		{
+			String t = ta1.getText();
+			ta1.setText(t.substring(0, t.length()-2));
+		}
 	}
 
 	public void save()
@@ -166,7 +196,8 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 		{
 			if(file_direct_save)
 			{
-				FileOutputStream fout = new FileOutputStream(ta1.getText());
+				String txt = ta1.getText();
+				FileOutputStream fout = new FileOutputStream(txt.substring(0, txt.length()-2));
 				String data = ta.getText();
 				byte arr[] = data.getBytes();
 				fout.write(arr);
@@ -174,6 +205,7 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 				JOptionPane.showMessageDialog(this, "File Saved");
 				file_direct_save = true;
 				is_file_saved = true;
+				prev_txt = ta.getText();
 			}
 			else
 			{
@@ -210,6 +242,7 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 				JOptionPane.showMessageDialog(this, "File Saved");
 				file_direct_save = true;
 				is_file_saved = true;
+				prev_txt = ta.getText();
 			}
 		} 
 		catch(Exception ex)
@@ -238,6 +271,8 @@ class MyFrame extends JFrame implements ActionListener, DocumentListener
 							ta1.setText(f.getAbsolutePath());
 							// JOptionPane.showMessageDialog(this, f.getAbsolutePath()); 
 							is_file_saved = true;	
+							prev_txt = ta.getText();
+
 						}						
 					}
 					catch(Exception ex)
